@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyWarzz • B.Tech Engineering Semester Prep & Live Battles</title>
+  
+  <!-- Original QuizClash Lightning Bolt Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23080c1f'/%3E%3Cpath d='M26 6L12 24h10l-4 18 18-20H26z' fill='none' stroke='%23ffffff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>window.tailwind&&(tailwind.config={theme:{extend:{colors:{
+purple:{50:'#fff0f9',100:'#ffe0f3',200:'#ffc2e8',300:'#ff94d6',400:'#ff5cc0',500:'#ff2d9f',600:'#f0087f',700:'#c4006a',800:'#9a0054',900:'#6e003c',950:'#3f0022'},
+violet:{50:'#fff0f9',100:'#ffe0f3',200:'#ffc2e8',300:'#ff94d6',400:'#ff5cc0',500:'#ff2d9f',600:'#f0087f',700:'#c4006a',800:'#9a0054',900:'#6e003c',950:'#3f0022'},
+fuchsia:{300:'#ff8af0',400:'#ff4fe6',500:'#ff1fd8',600:'#d600b5',700:'#a3008a',900:'#52004a',950:'#2e0029'},
+indigo:{50:'#ecfeff',100:'#cffafe',200:'#a5f3fc',300:'#67e8f9',400:'#22d3ee',500:'#06b6d4',600:'#00a3c4',700:'#0e7490',800:'#155e75',900:'#164e63',950:'#083344'}}}}});</script>
+  
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+</head>
+<body class="purple-edge-glow cyber">
+  <div id="fx-precover" style="position:fixed;inset:0;z-index:19990;background:#05030c"></div>
+  <!-- LOGIN (required on every visit) -->
+  <div id="sw-status" class="sw-status" title="Server status">checking server…</div>
+  <div id="login-screen">
+    <div class="lg-card">
+      <div class="lg-logo"><svg viewBox="0 0 32 32" fill="none"><path d="M18 3L6 17H16L13 29L26 14H16L18 3Z" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(255,45,149,.35)"/></svg></div>
+      <h1 class="lg-title">STUDYWARZZ</h1>
+      <p class="lg-sub" id="lg-sub">LOGIN TO ENTER THE ARENA</p>
+      <div class="lg-tabs">
+        <button type="button" id="tab-login" class="active" onclick="setAuthMode('login')">LOGIN</button>
+        <button type="button" id="tab-register" onclick="setAuthMode('register')">REGISTER</button>
+      </div>
+      <label class="lg-label" for="login-user">👤 Username</label>
+      <input id="login-user" type="text" maxlength="30" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="e.g. Ben@2026" oninput="loginHints()" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+      <div id="hint-user" class="lg-hint">Letters, numbers & @ only • minimum 7 characters</div>
+      <label class="lg-label" for="login-pass">🔑 Password</label>
+      <div class="lg-pass">
+        <input id="login-pass" type="password" maxlength="40" autocomplete="current-password" placeholder="letters & numbers, min 5" oninput="loginHints()" onkeydown="if(event.key==='Enter')passEnter()">
+        <button type="button" onclick="togglePass()" id="login-eye" aria-label="Show password">👁</button>
+      </div>
+      <div id="hint-pass" class="lg-hint">Letters & numbers only • minimum 5 characters</div>
+      <div id="confirm-wrap" style="display:none">
+        <label class="lg-label" for="login-pass2">🔁 Confirm Password</label>
+        <input id="login-pass2" type="password" maxlength="40" autocomplete="new-password" placeholder="type the same password again" oninput="loginHints()" onkeydown="if(event.key==='Enter')submitLogin()">
+        <div id="hint-pass2" class="lg-hint">• Both passwords must match</div>
+      </div>
+      <button id="login-btn" type="button" onclick="submitLogin()">ENTER THE ARENA ➔</button>
+      <div class="lg-note" id="lg-note">New here? <a onclick="setAuthMode('register')">Create your account</a></div>
+    </div>
+  </div>
+
+
+  <!-- Purple Ambient Corner Accents -->
+  <div class="purple-corner-top-left"></div>
+  <div class="purple-corner-top-right"></div>
+  <div class="purple-corner-bottom-left"></div>
+  <div class="purple-corner-bottom-right"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Top App Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-[#090b16]/95 backdrop-blur-md border-b border-purple-900/30 px-4 lg:px-8 py-3.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo with Original QuizClash Lightning Bolt Symbol -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('dashboard')">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 border border-purple-500/50 flex items-center justify-center shadow-lg shadow-purple-600/30 group hover:border-purple-400 transition-all">
+          <svg class="w-6 h-6 transform -rotate-6 group-hover:scale-110 transition-transform" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 3L6 17H16L13 29L26 14H16L18 3Z" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="rgba(255,45,149, 0.25)"/>
+          </svg>
+        </div>
+        <div>
+          <span class="text-xl font-black brand-glow text-white tracking-wide">
+            StudyWarzz
+          </span>
+          <span class="ml-2 text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+            B.TECH
+          </span>
+          <div class="text-[10px] text-slate-400 -mt-0.5">Engineering Semester Prep & Live Battles</div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden lg:flex items-center gap-2">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all bg-purple-600 text-white shadow-md shadow-purple-600/30">
+          <span>🏛</span> Dashboard
+        </button>
+        <button onclick="switchTab('bank')" id="nav-bank" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/80">
+          <span>📚</span> Question Bank
+        </button>
+        <button onclick="switchTab('study')" id="nav-study" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/80">
+          <span>⏱️</span> My Study Time
+        </button>
+        <button onclick="switchTab('weak')" id="nav-weak" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/80">
+          <span>🎯</span> Weak Topics
+        </button>
+        <button onclick="switchTab('rankings')" id="nav-rankings" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/80">
+          <span>🏆</span> Rankings
+        </button>
+        <button onclick="switchTab('profile')" id="nav-profile" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all text-slate-300 hover:text-white hover:bg-slate-800/80">
+          <span>👤</span> Profile & Progress
+        </button>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3">
+        <button onclick="toggleAudio()" id="audio-toggle-btn" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white text-xs">
+          🔊
+        </button>
+
+        <div class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/30 text-xs font-bold text-amber-300">
+          <span>🔥</span> <span id="header-streak-val">9d</span>
+        </div>
+
+        <button type="button" onclick="openCharacterShop()" title="Character shop" class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-amber-500/40 text-xs font-black text-amber-300 hover:border-pink-500">🪙 <span id="header-coins">120</span> <span class="text-pink-300">🛒</span></button>
+
+        <div onclick="openProfileModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-purple-900/40 cursor-pointer hover:border-purple-500/50 transition-all">
+          <img id="header-badge" alt="" style="width:24px;height:24px;border-radius:50%">
+          <span id="header-avatar" class="text-sm">⚡</span>
+          <span id="header-username" class="text-xs font-bold text-slate-200">Ben</span>
+          <span class="text-xs text-purple-400">✏️</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Sub Navigation Bar -->
+  <div class="lg:hidden flex items-center justify-around bg-slate-950/95 border-b border-purple-950/50 px-2 py-2 overflow-x-auto gap-2">
+    <button onclick="switchTab('dashboard')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-800 text-purple-300 whitespace-nowrap">Dashboard</button>
+    <button onclick="switchTab('bank')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap">Question Bank</button>
+    <button onclick="switchTab('study')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap">My Study Time</button>
+    <button onclick="switchTab('weak')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap">Weak Topics</button>
+    <button onclick="switchTab('rankings')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap">Rankings</button>
+    <button onclick="switchTab('profile')" class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 whitespace-nowrap">Profile & Progress</button>
+  </div>
+
+  <!-- Main View Container -->
+  <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 relative z-10 min-h-[calc(100vh-140px)]">
+
+    <!-- ==================== TAB 1: DASHBOARD ==================== -->
+    <div id="tab-dashboard" class="space-y-6">
+      
+      <!-- Greeting Banner -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-r from-purple-950/50 via-[#101428] to-indigo-950/40 p-6 sm:p-8 rounded-3xl border border-purple-800/40 shadow-2xl">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-[11px] font-mono font-medium text-purple-300 mb-3">
+            <span>⚡</span> B.Tech Semester Exam Season Live • C, Python, Chem, Maths & English
+          </div>
+          
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white flex items-center gap-2">
+            Welcome back, <span id="dash-username">Ben</span>
+            <span class="text-amber-400 text-2xl">⚡</span>
+            <span class="text-slate-400 text-lg cursor-pointer hover:text-white" onclick="openProfileModal()">✏️</span>
+          </h1>
+
+          <p class="text-slate-400 text-xs sm:text-sm mt-2 max-w-xl leading-relaxed">
+            You are on a <strong class="text-amber-400" id="dash-streak-phrase">9-day streak!</strong> Your accuracy in C Pointers & DMA is at 38%. Prep for upcoming lab internals, mid-terms, and check your syllabus tracker!
+          </p>
+        </div>
+
+        <!-- 3 Stat Blocks -->
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div class="w-24 bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 text-center">
+            <div class="text-2xl font-black text-amber-400 font-mono flex items-center justify-center gap-1">
+              <span id="dash-streak-count">9</span> <span class="text-amber-500 text-lg">🔥</span>
+            </div>
+            <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mt-1">STREAK</div>
+          </div>
+
+          <div class="w-24 bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 text-center">
+            <div class="text-2xl font-black text-purple-400 font-mono">60%</div>
+            <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mt-1">SYLLABUS</div>
+          </div>
+
+          <div class="w-24 bg-slate-900/90 border border-slate-800/90 rounded-2xl p-4 text-center">
+            <div class="text-2xl font-black text-pink-400 font-mono" id="dash-todo-count">3</div>
+            <div class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mt-1">TO-DOS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Dashboard Launchpad Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- CARD 1: Host Live Battle -->
+        <div class="bg-[#0f1325]/90 rounded-3xl p-6 border border-purple-700/30 flex flex-col justify-between shadow-xl relative overflow-hidden group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl text-purple-400">⚔</span>
+              <span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                ● 17 Qs ARENA
+              </span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-1.5">
+              Host Live Battle <span class="text-amber-400 text-xs">👑</span>
+            </h3>
+            <p class="text-xs text-slate-400 mb-5 leading-relaxed">
+              Host a synchronized tournament against Lily, Hazel, Elsa, Spiderman & Batman.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-purple-300 border border-slate-800">⚡ Speed Bonus</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-purple-300 border border-slate-800">🤖 AI Batch</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-purple-300 border border-slate-800">🏆 Podium XP</span>
+            </div>
+          </div>
+
+          <button onclick="openSubjectPickerModal()" class="w-full py-3 rounded-2xl font-bold text-xs bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-600/30 transition-all flex items-center justify-center gap-2">
+            <span>⚔</span> HOST MATCH (17 QS)
+          </button>
+        </div>
+
+        <!-- CARD 2: Join Classroom (Wine Red Theme) -->
+        <div class="wine-red-card rounded-3xl p-6 flex flex-col justify-between shadow-xl relative overflow-hidden group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl text-rose-300">🚪</span>
+              <span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-500/30 text-rose-200 border border-rose-400/40">
+                🔒 WINE ARENA
+              </span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-1.5">
+              Join Classroom <span class="text-amber-400 text-xs">🔥</span>
+            </h3>
+            <p class="text-xs text-rose-200/80 mb-4 leading-relaxed">
+              Got a PIN from your professor or lab group? Enter code to join battle immediately.
+            </p>
+
+            <div class="relative mb-2">
+              <input type="text" id="dash-room-code-input" placeholder="ENTER ROOM PIN (E.G. SW-7821)" class="w-full bg-black/40 border border-rose-500/40 text-center uppercase tracking-widest text-xs font-mono font-bold text-white px-3 py-2.5 rounded-xl focus:outline-none focus:border-rose-400 transition-all">
+            </div>
+            <div id="join-room-error" class="hidden text-[11px] font-semibold text-rose-300 text-center mb-2">⚠️ Enter Room Code / PIN First!</div>
+          </div>
+
+          <button onclick="handleJoinRoomSubmit()" class="w-full py-3 rounded-2xl font-bold text-xs bg-gradient-to-r from-[#7a1c2d] via-[#8d1b32] to-[#5b0e1e] hover:from-[#941e35] hover:to-[#6d1325] border border-rose-500/50 text-white shadow-lg shadow-rose-950/60 transition-all flex items-center justify-center gap-2 mt-4">
+            <span>🔑</span> JOIN WITH CODE
+          </button>
+        </div>
+
+        <!-- CARD 3: B.Tech Question Banks (Orange Theme) -->
+        <div class="bg-[#0f1325]/90 rounded-3xl p-6 border border-amber-600/30 flex flex-col justify-between shadow-xl relative overflow-hidden group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl text-amber-400">📚</span>
+              <span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                📁 5 COURSES
+              </span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-1.5">
+              B.Tech Question Banks <span class="text-amber-400 text-xs">✨</span>
+            </h3>
+            <p class="text-xs text-slate-400 mb-5 leading-relaxed">
+              Explore faculty unit question banks, lecture notes, lab sheets, and verified MCQs.
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 mb-6 text-[10px] font-mono text-slate-300">
+              <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">💻 C</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">🐍 Python</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">📐 Maths</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">🧪 Chem</span>
+              <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">📖 Eng</span>
+            </div>
+          </div>
+
+          <button onclick="switchTab('bank')" class="w-full py-3 rounded-2xl font-bold text-xs bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white shadow-lg shadow-orange-700/30 transition-all flex items-center justify-center gap-2">
+            <span>📁</span> EXPLORE BANKS
+          </button>
+        </div>
+
+        <!-- CARD 4: Study Time Hub (Light Pink Theme) -->
+        <div class="bg-[#0f1325]/90 rounded-3xl p-6 border border-pink-600/30 flex flex-col justify-between shadow-xl relative overflow-hidden group">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-3xl text-pink-400">📅</span>
+              <span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">
+                ⭐ PINK HUB
+              </span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-1.5">
+              Study Time Hub <span class="text-pink-400 text-xs">🎯</span>
+            </h3>
+            <p class="text-xs text-slate-400 mb-5 leading-relaxed">
+              Self-quiz question count sliders, lab assignment to-dos, and semester syllabus tracker.
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-pink-300 border border-slate-800">🎚 1-25 Qs Slider</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-pink-300 border border-slate-800">📋 Lab Record To-Dos</span>
+            </div>
+          </div>
+
+          <button onclick="switchTab('study')" class="w-full py-3 rounded-2xl font-bold text-xs bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white shadow-lg shadow-pink-700/30 transition-all flex items-center justify-center gap-2">
+            <span>🎯</span> STUDY STATION
+          </button>
+        </div>
+
+      </div>
+
+      <!-- DAILY MOTTO & B.TECH INSPIRATION BAR -->
+      <div class="bg-gradient-to-r from-purple-950/60 via-[#0e1224] to-purple-950/60 p-5 sm:p-6 rounded-3xl border border-purple-800/40 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div onclick="nextMotivationalMotto()" title="Click to refresh daily motivation!" class="w-10 h-10 rounded-2xl bg-purple-600/30 border border-purple-500/40 flex items-center justify-center text-amber-300 text-xl font-bold cursor-pointer hover:bg-purple-600/50 hover:scale-105 active:scale-95 transition-all">
+            ⚡
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xl font-bold text-white tracking-wide">
+                StudyWarzz
+              </span>
+              <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-purple-500/30 text-purple-200 border border-purple-500/40">
+                DAILY MOTTO
+              </span>
+            </div>
+            <p id="motto-quote-text" class="text-xs sm:text-sm text-slate-300 mt-1 italic">
+              "Code your logic, master your formulas, conquer your semester. In the arena of engineering, consistency is your ultimate superweapon."
+            </p>
+          </div>
+        </div>
+
+        <button onclick="startDailyGrind()" class="px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-600/30 transition-all whitespace-nowrap">
+          ⚡ START DAILY GRIND ➔
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ==================== TAB 2: QUESTION BANK ==================== -->
+    <div id="tab-bank" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-amber-950/40 via-[#0e1224] to-orange-950/30 p-6 sm:p-8 rounded-3xl border border-amber-600/40 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider">📁 Faculty Curated & Personal Uploads</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">B.Tech Engineering Question Library</h2>
+          <p class="text-xs text-slate-400 mt-1">Select any subject below to inspect verified question banks, open study materials, or upload new files.</p>
+        </div>
+        <div>
+          <button onclick="document.getElementById('bank-file-input').click()" class="px-5 py-3 rounded-2xl font-bold text-xs bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white shadow-lg shadow-amber-600/30 flex items-center gap-2">
+            <span>📁</span> Upload Question Bank (This PC)
+          </button>
+          <input type="file" id="bank-file-input" class="hidden" accept=".json,.txt,.csv,.pdf,.docx" onchange="handleBankFileSelect(event)">
+        </div>
+      </div>
+
+      <!-- Subject Cards Grid -->
+      <div id="subject-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </div>
+
+    <!-- ==================== TAB 3: MY STUDY TIME ==================== -->
+    <div id="tab-study" class="hidden space-y-6">
+      <div class="flex items-center gap-3 border-b border-pink-900/40 pb-3">
+        <button onclick="switchStudySubTab('selfquiz')" id="subnav-selfquiz" class="px-4 py-2 rounded-xl text-xs font-bold bg-pink-600 text-white shadow-md shadow-pink-600/30">
+          🎯 Self-Quiz Generator
+        </button>
+        <button onclick="switchStudySubTab('todos')" id="subnav-todos" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900">
+          📝 Academic To-Do List
+        </button>
+        <button onclick="switchStudySubTab('syllabus')" id="subnav-syllabus" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-300 hover:bg-slate-900">
+          📊 Syllabus Tracker
+        </button>
+      </div>
+
+      <!-- Self-Quiz SubTab -->
+      <div id="subtab-selfquiz" class="space-y-6">
+        <div class="bg-gradient-to-r from-pink-950/40 via-[#0e1224] to-rose-950/30 p-6 sm:p-8 rounded-3xl border border-pink-600/40 shadow-xl">
+          <h3 class="text-xl font-black text-white mb-2">Configure Practice Challenge</h3>
+          <p class="text-xs text-slate-400 mb-6">Select your course and choose custom question count to test at your own speed.</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+            <div>
+              <label class="block text-xs font-bold text-pink-300 uppercase mb-2">Subject</label>
+              <select id="self-quiz-subject" class="w-full bg-slate-900 border border-pink-500/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none">
+                <option value="all">🌐 All B.Tech Subjects</option>
+                <option value="c">💻 C Programming</option>
+                <option value="python">🐍 Python</option>
+                <option value="maths">📐 Maths & Calculus</option>
+                <option value="chemistry">🧪 Engineering Chemistry</option>
+                <option value="english">📖 Professional English</option>
+              </select>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-xs font-bold text-pink-300 uppercase">Custom Number of Questions</label>
+                <span id="slider-count-badge" class="text-xs font-mono font-bold text-white bg-pink-600 px-2 py-0.5 rounded">10 Questions</span>
+              </div>
+              <input type="range" id="self-quiz-slider" min="1" max="25" value="10" oninput="updateSliderCount(this.value)" class="w-full accent-pink-500 cursor-pointer mt-2">
+            </div>
+          </div>
+
+          <button onclick="startSoloSelfQuiz()" class="px-6 py-3 rounded-2xl font-bold text-xs bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white shadow-lg shadow-pink-600/30">
+            Start Solo Self-Quiz ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- Academic To-Do SubTab -->
+      <div id="subtab-todos" class="hidden space-y-4">
+        <div class="bg-slate-900/90 p-5 rounded-2xl border border-pink-900/40 flex gap-3">
+          <input type="text" id="new-todo-input" placeholder="Add engineering task (e.g. Finish C Linked List Lab Record, Study EDTA titration)..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-pink-500">
+          <select id="new-todo-priority" title="Priority" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs font-bold text-white focus:outline-none">
+            <option value="high">🔴 High</option>
+            <option value="medium" selected>🟠 Medium</option>
+            <option value="low">🟡 Low</option>
+          </select>
+          <button onclick="addAcademicTodo()" class="px-5 py-2.5 rounded-xl font-bold text-xs bg-pink-600 hover:bg-pink-500 text-white shadow-md shadow-pink-600/30">
+            + Add Task
+          </button>
+        </div>
+        <div id="todo-items-list" class="space-y-2.5"></div>
+      </div>
+
+      <!-- Syllabus Tracker SubTab -->
+      <div id="subtab-syllabus" class="hidden space-y-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          
+          <!-- LEFT COLUMN: Syllabus Tracker -->
+          <div class="space-y-4">
+            <div class="flex items-center justify-between bg-slate-900/90 p-4 rounded-2xl border border-pink-900/30">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📊</span>
+                <span class="text-sm font-bold text-white uppercase tracking-wider">Semester Progress Tracker</span>
+              </div>
+              <span class="text-xs font-mono font-bold text-pink-400">Unit Completion</span>
+            </div>
+            
+            <div id="syllabus-units-container" class="space-y-3.5"></div>
+          </div>
+
+          <!-- RIGHT COLUMN: Syllabus Topics Lineally with Peacock Emoji 🦚 -->
+          <div class="bg-slate-900/90 p-5 rounded-3xl border border-purple-600/30 space-y-4 shadow-xl">
+            <div class="flex items-center justify-between border-b border-purple-900/30 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">🦚</span>
+                <div>
+                  <h3 class="text-sm font-black text-white tracking-wide">Course Syllabus Outline 🦚</h3>
+                  <div class="text-[10px] text-slate-400 font-mono">B.Tech Engineering Detailed Topic List</div>
+                </div>
+              </div>
+              
+              <!-- Subject Filter Dropdown -->
+              <select id="syllabus-view-select" onchange="renderSyllabusTopicsDetailed(this.value)" class="bg-slate-950 border border-purple-500/40 rounded-xl px-2.5 py-1.5 text-xs font-bold text-purple-300 focus:outline-none">
+                <option value="c">💻 C Programming (PPS)</option>
+                <option value="python">🐍 Python (PP)</option>
+                <option value="maths">📐 Maths & Calculus</option>
+                <option value="chemistry">🧪 Eng. Chemistry</option>
+                <option value="english">📖 Professional English</option>
+              </select>
+            </div>
+
+            <!-- Linear Syllabus Topics Container -->
+            <div id="linear-syllabus-content" class="space-y-4 max-h-[560px] overflow-y-auto pr-1"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: WEAK TOPICS ==================== -->
+    <div id="tab-weak" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-emerald-950/40 via-[#0e1224] to-teal-950/30 p-6 sm:p-8 rounded-3xl border border-emerald-600/40 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">🎯 Adaptive Diagnostic Engine</span>
+          <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Weak Topics & Diagnostic Analytics</h2>
+          <p class="text-xs text-slate-400 mt-1">Generated from your latest quiz attempts. Launch targeted revision drills to master difficult units.</p>
+        </div>
+        <button onclick="launchTargetedRevisionQuiz()" class="px-6 py-3 rounded-2xl font-bold text-xs bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-lg shadow-emerald-700/30">
+          ⚡ Revise My Weak Topics
+        </button>
+      </div>
+
+      <div id="weak-topics-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+
+    <!-- ==================== TAB 5: RANKINGS ==================== -->
+    <div id="tab-rankings" class="hidden space-y-6">
+      <div class="bg-slate-900/90 p-6 rounded-3xl border border-purple-800/40">
+        <h3 class="text-xl font-bold text-white mb-2">College Leaderboard</h3>
+        <p class="text-xs text-slate-400 mb-6">Top performing engineers in B.Tech Sem-1.</p>
+        <div class="space-y-3" id="rankings-list">
+          <div class="p-4 rounded-2xl bg-purple-900/40 border border-purple-500 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">👑</span>
+              <span class="font-bold text-white">1. Elsa</span>
+            </div>
+            <span class="font-mono font-bold text-purple-300">14,250 XP</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🥈</span>
+              <span class="font-bold text-slate-300">2. Spiderman</span>
+            </div>
+            <span class="font-mono font-bold text-slate-400">12,980 XP</span>
+          </div>
+          <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">🥉</span>
+              <span class="font-bold text-slate-300" id="rankings-user-name">3. Ben (You)</span>
+            </div>
+            <span class="font-mono font-bold text-amber-400" id="rankings-user-xp">1,480 XP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 6: PROFILE & PROGRESS ==================== -->
+    <div id="tab-profile" class="hidden space-y-6">
+      <div class="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-purple-800/40 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-purple-600/20 border border-purple-500/40 flex items-center justify-center text-3xl" id="profile-avatar-large">
+            ⚡
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 id="profile-username-display" class="text-2xl font-bold text-white">Ben</h2>
+              <button onclick="openProfileModal()" class="text-xs text-purple-400 underline">Edit Profile</button>
+            </div>
+            <div class="text-xs text-slate-400">B.Tech Computer Science & Engineering • 1st Year</div>
+            <div class="text-xs font-mono text-purple-300 mt-1" id="profile-stats-meta">1,480 XP • Level 4 Engineer • 🔥 9-Day Streak</div>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <span class="px-3 py-1 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-300">🏅 Speed Demon</span>
+          <span class="px-3 py-1 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-300" id="profile-streak-badge">🔥 9-Day Streak</span>
+          <span class="px-3 py-1 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-300">⚡ Code Master</span>
+        </div>
+      </div>
+
+      <!-- ROCKET PROGRESS MINI-GAME -->
+      <div class="bg-[#f7f2ea] text-slate-900 p-6 sm:p-8 rounded-3xl border-2 border-amber-300/40 shadow-[0_20px_60px_-15px_rgba(30,58,138,0.55)] space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-amber-900/15 pb-4">
+          <div>
+            <div class="text-xs font-mono font-bold text-amber-800 uppercase tracking-wider">🚀 365-Day Academic Trajectory</div>
+            <h3 class="text-2xl font-black text-[#3d2314]">Rocketzz Progress Launchpad</h3>
+            <p class="text-xs text-amber-950/70 mt-0.5">Select a month and click "Launch Rocketzz" to plot and simulate your progress.</p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <select id="rocket-month-select" onchange="resetRocketCanvas()" class="bg-[#ede4d5] border border-amber-800/30 rounded-xl px-3 py-2 text-xs font-bold text-amber-950 focus:outline-none">
+              <option value="0">January</option>
+              <option value="1">February</option>
+              <option value="2">March</option>
+              <option value="3">April</option>
+              <option value="4">May</option>
+              <option value="5">June</option>
+              <option value="6">July</option>
+              <option value="7">August</option>
+              <option value="8">September</option>
+              <option value="9" selected>October (Current)</option>
+              <option value="10">November</option>
+              <option value="11">December</option>
+            </select>
+
+            <button onclick="launchMonthRocket()" class="px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 text-white shadow-lg shadow-red-700/40 transition-all flex items-center gap-1.5 active:scale-95">
+              <span>🔥</span> Launch Rocketzz
+            </button>
+          </div>
+        </div>
+
+        <div class="relative w-full h-[320px] bg-[#faf6ee] rounded-2xl border border-amber-900/20 overflow-hidden shadow-inner">
+          <canvas id="rocket-canvas" class="w-full h-full block"></canvas>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#ede4d5]/70 p-3 rounded-xl border border-amber-900/20 text-xs font-mono text-amber-950">
+          <div><strong class="text-red-700">📈 Y-Axis:</strong> Daily Questions Solved (0 to 40 Qs)</div>
+          <div><strong class="text-amber-900">📅 X-Axis:</strong> Days of Selected Month (Day 1 to Day 31)</div>
+          <div id="rocket-hud-status" class="font-bold text-red-600">Rocket 🚀 on Launchpad</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== LIVE BATTLE ARENA ==================== -->
+    <div id="live-battle-arena" class="hidden space-y-6"></div>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- MODAL 1: PRE-BATTLE SUBJECT PICKER -->
+  <div id="subject-picker-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-purple-600/40 rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-5 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-black text-white flex items-center gap-2">
+          ⚔️ Pick Subject for Live Battle
+        </h3>
+        <button onclick="closeSubjectPickerModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-400">
+        Choose your B.Tech course. This will instantly assemble a synchronized <span class="text-purple-300 font-bold">17-Question Battle Arena</span> against Lily, Hazel, Elsa, Spiderman, and Batman.
+      </p>
+
+      <div class="grid grid-cols-2 gap-3" id="battle-subject-options">
+        <button onclick="selectBattleSubject('c', this)" class="p-3.5 rounded-2xl bg-slate-800/80 border border-purple-400 bg-purple-900/50 text-left text-xs font-bold text-white transition-all flex items-center gap-2.5">
+          <span class="text-xl">💻</span> C Programming
+        </button>
+        <button onclick="selectBattleSubject('python', this)" class="p-3.5 rounded-2xl bg-slate-800/80 border border-purple-500/30 hover:border-purple-400 text-left text-xs font-bold text-white transition-all flex items-center gap-2.5">
+          <span class="text-xl">🐍</span> Python
+        </button>
+        <button onclick="selectBattleSubject('maths', this)" class="p-3.5 rounded-2xl bg-slate-800/80 border border-purple-500/30 hover:border-purple-400 text-left text-xs font-bold text-white transition-all flex items-center gap-2.5">
+          <span class="text-xl">📐</span> Maths & Calculus
+        </button>
+        <button onclick="selectBattleSubject('chemistry', this)" class="p-3.5 rounded-2xl bg-slate-800/80 border border-purple-500/30 hover:border-purple-400 text-left text-xs font-bold text-white transition-all flex items-center gap-2.5">
+          <span class="text-xl">🧪</span> Eng. Chemistry
+        </button>
+        <button onclick="selectBattleSubject('english', this)" class="p-3.5 rounded-2xl bg-slate-800/80 border border-purple-500/30 hover:border-purple-400 text-left text-xs font-bold text-white transition-all flex items-center gap-2.5">
+          <span class="text-xl">📖</span> Professional English
+        </button>
+        <button onclick="selectBattleSubject('all', this)" class="p-3.5 rounded-2xl bg-slate-800/80 border border-purple-500/30 hover:border-purple-400 text-left text-xs font-bold text-white transition-all flex items-center gap-2.5">
+          <span class="text-xl">🌐</span> All Combined
+        </button>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="confirmAndLaunchBattle()" class="w-full py-3.5 rounded-2xl font-bold text-xs bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-600/30">
+          ENTER ARENA WITH 17 QUESTIONS ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: VIEW QUESTION BANK -->
+  <div id="view-bank-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-amber-500/40 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 id="view-bank-title" class="text-lg font-bold text-white flex items-center gap-2">
+            💻 C Programming Question Bank
+          </h3>
+          <span id="view-bank-count" class="text-xs text-amber-400 font-mono">18 Questions Loaded</span>
+        </div>
+        <button onclick="closeModal('view-bank-modal')" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <div id="bank-questions-scroll" class="p-5 space-y-4 overflow-y-auto flex-1"></div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: VIEW STUDY MATERIALS -->
+  <div id="view-materials-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-purple-500/40 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 id="view-materials-title" class="text-lg font-bold text-white flex items-center gap-2">
+            C Programming Handouts & Notes
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">Quick revision sheets, formula compendiums & lab handouts</p>
+        </div>
+        <button onclick="closeModal('view-materials-modal')" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <div id="materials-list-container" class="p-5 space-y-3.5 overflow-y-auto flex-1"></div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: INTERACTIVE DOCUMENT & FILE VIEWER -->
+  <div id="doc-viewer-modal" class="hidden fixed inset-0 z-[60] bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="bg-slate-900 border border-purple-500/50 rounded-3xl max-w-4xl w-full h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- Viewer Header -->
+      <div class="p-4 sm:p-5 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl text-purple-400">📄</span>
+          <div>
+            <h3 id="viewer-doc-title" class="text-sm sm:text-base font-bold text-white truncate max-w-md">pps UNIT_I.pdf</h3>
+            <span id="viewer-doc-meta" class="text-[11px] font-mono text-purple-300">Engineering Handout • Ready for revision</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="viewer-newtab-btn" onclick="openCurrentNoteInNewTab()" class="px-3.5 py-1.5 rounded-xl bg-purple-600/30 border border-purple-500/40 hover:bg-purple-600 text-xs font-bold text-purple-200 hover:text-white transition-all flex items-center gap-1.5">
+            ↗ Open in New Tab
+          </button>
+          <a id="viewer-download-btn" href="#" download class="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow transition-all flex items-center gap-1">
+            📥 Download
+          </a>
+          <button onclick="closeModal('doc-viewer-modal')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300">
+            ✕ Close
+          </button>
+        </div>
+      </div>
+
+      <!-- Viewer Frame -->
+      <div id="viewer-body-container" class="flex-1 bg-slate-950 p-4 sm:p-6 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: UPLOAD STUDY MATERIALS -->
+  <div id="upload-materials-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-purple-500/40 rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          📤 Upload Study Materials
+        </h3>
+        <button onclick="closeModal('upload-materials-modal')" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-400">
+        Upload your class PDF handouts, lab manuals, or lecture summaries for <strong id="upload-material-subject-title" class="text-purple-300">C Programming</strong>.
+      </p>
+
+      <div onclick="document.getElementById('material-file-input').click()" class="border-2 border-dashed border-purple-500/40 hover:border-purple-400 rounded-2xl p-8 text-center cursor-pointer bg-slate-950/60 transition-all">
+        <div class="text-4xl mb-2">📑</div>
+        <div class="text-xs font-bold text-white">Click to Select PDF / Word File</div>
+        <div class="text-[10px] text-slate-400 mt-1">Accepts PDF, Word, TXT, MD & images • Saved on this device</div>
+      </div>
+      <input type="file" id="material-file-input" class="hidden" accept=".pdf,.docx,.doc,.txt,.md,.png,.jpg,.jpeg,.gif,.webp" onchange="handleMaterialFileSelect(event)">
+    </div>
+  </div>
+
+  <!-- MODAL 6: CUSTOMIZE PROFILE -->
+  <div id="profile-custom-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-purple-500/40 rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-white">Customize Profile</h3>
+        <button onclick="closeModal('profile-custom-modal')" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">Username</label>
+        <input type="text" id="input-custom-username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-2">Select Avatar</label>
+        <div class="grid grid-cols-4 gap-2" id="avatar-choices">
+          <button onclick="setChosenAvatar('⚡')" class="p-2.5 rounded-xl bg-slate-800 hover:bg-purple-600 text-xl text-center">⚡</button>
+          <button onclick="setChosenAvatar('🚀')" class="p-2.5 rounded-xl bg-slate-800 hover:bg-purple-600 text-xl text-center">🚀</button>
+          <button onclick="setChosenAvatar('🕷️')" class="p-2.5 rounded-xl bg-slate-800 hover:bg-purple-600 text-xl text-center">🕷️</button>
+          <button onclick="setChosenAvatar('🦇')" class="p-2.5 rounded-xl bg-slate-800 hover:bg-purple-600 text-xl text-center">🦇</button>
+          <button onclick="setChosenAvatar('❄️')" class="p-2.5 rounded-xl bg-slate-800 hover:bg-purple-600 text-xl text-center">❄️</button>
+          <button onclick="setChosenAvatar('🌸')" class="p-2.5 rounded-xl bg-slate-800 hover:bg-purple-600 text-xl text-center">🌸</button>
+          <button onclick="setChosenAvatar('💻')" class="p-2.5 rounded-xl bg-slate-800 hover:bg-purple-600 text-xl text-center">💻</button>
+          <button onclick="setChosenAvatar('🔥')" class="p-2.5 rounded-xl bg-slate-800 hover:bg-purple-600 text-xl text-center">🔥</button>
+        </div>
+      </div>
+
+      <button onclick="saveUserProfileCustom()" class="w-full py-3 rounded-2xl font-bold text-xs bg-purple-600 hover:bg-purple-500 text-white shadow-md shadow-purple-600/30">
+        Save Changes
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== APPLICATION SCRIPTS ==================== -->
+  <script src="app.js"></script>
+  <script src="fx.js"></script>
+</body>
+</html>
